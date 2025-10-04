@@ -1,0 +1,121 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html, body, #__next { height: 100%; }
+  body {
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+    /* lighter global text for better readability on dark background */
+    color: #e6eef8;
+    background: linear-gradient(180deg, #0b1220 0%, #0d1117 100%);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+/* Force lighter text across the app for readability (easy to tweak) */
+:root { --app-text: #e6eef8; }
+/* Apply to most content elements; prefer targeted overrides for form elements to ensure readability */
+body, header, footer, nav, .card, .card *, .btn-ghost, .btn-primary, label, a, p, span, div, h1, h2, h3, h4, h5, h6, li {
+  color: var(--app-text) !important;
+}
+
+/* Form controls: ensure readable text, background and placeholder color */
+input, textarea, select {
+  color: var(--app-text) !important;
+  background-color: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.06);
+}
+input::placeholder, textarea::placeholder {
+  color: rgba(230,238,248,0.6) !important;
+}
+
+/* Buttons often use specific colors; ensure their text remains readable */
+button, .btn-primary, .btn-ghost {
+  color: var(--app-text) !important;
+}
+
+
+/* container styles */
+/* component utilities */
+@layer components {
+  /* dark glass card - explicit CSS to avoid @apply issues */
+  .card {
+    border-radius: 0.75rem; /* rounded-xl */
+    box-shadow: 0 4px 6px -1px rgba(2,6,23,0.4), 0 2px 4px -2px rgba(2,6,23,0.6);
+    border-width: 1px;
+    border-style: solid;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    background-color: rgba(9,11,15,0.6);
+    border-color: rgba(255,255,255,0.06);
+  }
+
+  .input {
+    width: 100%;
+    padding: 0.5rem; /* p-2 */
+    border-radius: 0.375rem; /* rounded-md */
+    background-color: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.06);
+    color: #e6eef8;
+  }
+  .input:focus {
+    outline: none;
+    box-shadow: 0 0 0 4px rgba(88,166,255,0.12);
+  }
+
+  .btn-primary {
+    padding: 0.25rem 0.75rem; /* py-1 px-3 */
+    border-radius: 0.375rem;
+    background-color: #58a6ff; /* primary-500 */
+    color: white;
+  }
+  .btn-primary:hover { background-color: #1f6feb; }
+
+  .btn-ghost {
+    padding: 0.25rem 0.75rem;
+    border-radius: 0.375rem;
+    border: 1px solid rgba(99,102,106,0.6);
+    color: rgba(230,238,248,0.95);
+  }
+  .btn-ghost:hover { background-color: rgba(255,255,255,0.04); }
+  /* Themed range (slider) styles used by the password generator length scroller */
+  input[type="range"].range {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 6px;
+    background: transparent;
+    cursor: pointer;
+  }
+  input[type="range"].range:focus { outline: none; }
+
+  /* WebKit track */
+  input[type="range"].range::-webkit-slider-runnable-track {
+    height: 6px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 999px;
+  }
+  input[type="range"].range::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    margin-top: -6px; /* center the thumb */
+    width: 18px;
+    height: 18px;
+    background: #58a6ff; /* primary */
+    border-radius: 50%;
+    box-shadow: 0 4px 10px rgba(5,9,20,0.6);
+    border: 2px solid rgba(255,255,255,0.95);
+  }
+  input[type="range"].range:focus::-webkit-slider-thumb { box-shadow: 0 0 0 6px rgba(88,166,255,0.12); }
+
+  /* Firefox */
+  input[type="range"].range::-moz-range-track { height: 6px; background: rgba(255,255,255,0.06); border-radius: 999px; }
+  input[type="range"].range::-moz-range-thumb { width: 18px; height: 18px; background: #58a6ff; border-radius: 50%; border: 2px solid rgba(255,255,255,0.95); }
+
+  /* IE/Edge */
+  input[type="range"].range::-ms-track { height: 6px; background: transparent; border-color: transparent; color: transparent; }
+  input[type="range"].range::-ms-fill-lower { background: rgba(255,255,255,0.06); border-radius: 999px; }
+  input[type="range"].range::-ms-fill-upper { background: rgba(255,255,255,0.06); border-radius: 999px; }
+}
+
