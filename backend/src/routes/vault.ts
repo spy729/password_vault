@@ -8,7 +8,27 @@ const router = Router();
 router.get('/', authenticate, async (req: AuthRequest, res: Response) => {
   try {
     const userId = req.user!.id;
-    const items = await VaultItem.find({ userId: new Types.ObjectId(userId) }).sort({ createdAt: -1 });
+
+  const qRaw = req.query.q;
+  const fieldRaw = req.query.field;
+  const q = String(Array.isArray(qRaw) ? qRaw[0] : (qRaw ?? ''));
+  const field = String(Array.isArray(fieldRaw) ? fieldRaw[0] : (fieldRaw ?? ''));
+
+    const baseFilter: any = { userId: new Types.ObjectId(userId) };
+
+    if (q && q.trim().length > 0) {
+      const escaped = q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const regex = new RegExp(escaped, 'i');
+      const allowedFields = ['title', 'username', 'url', 'notes'];
+
+      if (field && allowedFields.includes(field)) {
+        baseFilter[field] = { $regex: regex };
+      } else {
+        baseFilter.$or = allowedFields.map(f => ({ [f]: { $regex: regex } }));
+      }
+    }
+
+    const items = await VaultItem.find(baseFilter).sort({ createdAt: -1 });
     res.json(items);
   } catch (err) {
     console.error(err);

@@ -18,6 +18,8 @@ export default function Vault() {
 
   const [form, setForm] = useState({ title: '', username: '', password: '', url: '', notes: '' });
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filterMode, setFilterMode] = useState<'all' | 'withNotes'>('all');
 
   useEffect(() => { fetchItems(); }, []);
   // redirect to login if not authenticated
@@ -153,8 +155,17 @@ export default function Vault() {
     }
   }
 
-  // show items as-is (no search - extra features removed per user request)
-  const filtered = items;
+  // client-side filtering: search by title and optional "with notes" filter
+  const filtered = items.filter(item => {
+    const q = searchQuery.trim().toLowerCase();
+    if (q) {
+      if (!item.title || !item.title.toLowerCase().includes(q)) return false;
+    }
+    if (filterMode === 'withNotes') {
+      return Boolean(item.notes && item.notes.trim().length > 0);
+    }
+    return true;
+  });
 
   return (
     <Layout>
@@ -182,6 +193,19 @@ export default function Vault() {
             </div>
           </div>
         </form>
+
+        <div className="mb-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+          <input
+            className="p-2 border w-full sm:max-w-sm"
+            placeholder="Search by title..."
+            value={searchQuery}
+            onChange={e => setSearchQuery(e.target.value)}
+          />
+          <select className="p-2 border" value={filterMode} onChange={e => setFilterMode(e.target.value as any)}>
+            <option value="all">All</option>
+            <option value="withNotes">With notes</option>
+          </select>
+        </div>
 
         <div className="grid gap-4">
           {filtered.map(item => (
