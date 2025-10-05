@@ -20,6 +20,8 @@ export default function Vault() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [filterMode, setFilterMode] = useState<'all' | 'withNotes'>('all');
+  const [usernameQuery, setUsernameQuery] = useState('');
+  const [urlQuery, setUrlQuery] = useState('');
 
   useEffect(() => { fetchItems(); }, []);
   // redirect to login if not authenticated
@@ -157,9 +159,20 @@ export default function Vault() {
 
   // client-side filtering: search by title and optional "with notes" filter
   const filtered = items.filter(item => {
-    const q = searchQuery.trim().toLowerCase();
-    if (q) {
-      if (!item.title || !item.title.toLowerCase().includes(q)) return false;
+    const qTitle = searchQuery.trim().toLowerCase();
+    const qUser = usernameQuery.trim().toLowerCase();
+    const qUrl = urlQuery.trim().toLowerCase();
+
+    if (qTitle) {
+      if (!item.title || !item.title.toLowerCase().includes(qTitle)) return false;
+    }
+    if (qUser) {
+      const uname = (item.username || '').toLowerCase();
+      if (!uname.includes(qUser)) return false;
+    }
+    if (qUrl) {
+      const u = (item.url || '').toLowerCase();
+      if (!u.includes(qUrl)) return false;
     }
     if (filterMode === 'withNotes') {
       return Boolean(item.notes && item.notes.trim().length > 0);
@@ -194,17 +207,31 @@ export default function Vault() {
           </div>
         </form>
 
-        <div className="mb-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+        <div className="mb-4 grid grid-cols-1 sm:grid-cols-4 gap-2">
           <input
-            className="p-2 border w-full sm:max-w-sm"
+            className="p-2 border col-span-1 sm:col-span-2"
             placeholder="Search by title..."
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
           />
-          <select className="p-2 border" value={filterMode} onChange={e => setFilterMode(e.target.value as any)}>
-            <option value="all">All</option>
-            <option value="withNotes">With notes</option>
-          </select>
+          <input
+            className="p-2 border"
+            placeholder="Search by username..."
+            value={usernameQuery}
+            onChange={e => setUsernameQuery(e.target.value)}
+          />
+          <input
+            className="p-2 border"
+            placeholder="Search by URL..."
+            value={urlQuery}
+            onChange={e => setUrlQuery(e.target.value)}
+          />
+          <div className="sm:col-span-4">
+            <select className="p-2 border w-full mt-2 sm:mt-0" value={filterMode} onChange={e => setFilterMode(e.target.value as any)}>
+              <option value="all">All</option>
+              <option value="withNotes">With notes</option>
+            </select>
+          </div>
         </div>
 
         <div className="grid gap-4">
